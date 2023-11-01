@@ -1,62 +1,11 @@
 'use client';
-import { useCallback, useState } from 'react';
-import ReactFlow, {
-  Background,
-  Controls,
-  Node,
-  Edge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  NodeChange,
-  EdgeChange,
-  addEdge,
-  Connection,
-} from 'reactflow';
+import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
-
-const initialNodes: Array<Node> = [
-  {
-    id: '1',
-    position: { x: 0, y: 0 },
-    data: { label: 'Hello' },
-    type: 'input',
-  },
-  {
-    id: '2',
-    position: { x: 100, y: 100 },
-    data: { label: 'World' },
-  },
-];
-const initialEdges: Array<Edge> = [
-  //   {
-  //     id: '1-2',
-  //     source: '1',
-  //     target: '2',
-  //     animated: true,
-  //     label: 'to the',
-  //     type: 'smoothstep',
-  //   },
-];
+import { useDataProductsStore } from './store';
 
 export function Flow() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
-  );
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
-  );
-
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
-    [],
-  );
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
+    useDataProductsStore();
 
   return (
     <div className="w-full h-full">
@@ -66,6 +15,12 @@ export function Flow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        defaultViewport={{
+          x: 100,
+          y: 100,
+          zoom: 1,
+        }}
+        attributionPosition="bottom-left"
       >
         <Background />
         <Controls />
