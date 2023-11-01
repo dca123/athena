@@ -9,6 +9,8 @@ import ReactFlow, {
   applyNodeChanges,
   NodeChange,
   EdgeChange,
+  addEdge,
+  Connection,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -26,14 +28,14 @@ const initialNodes: Array<Node> = [
   },
 ];
 const initialEdges: Array<Edge> = [
-  {
-    id: '1-2',
-    source: '1',
-    target: '2',
-    animated: true,
-    label: 'to the',
-    type: 'smoothstep',
-  },
+  //   {
+  //     id: '1-2',
+  //     source: '1',
+  //     target: '2',
+  //     animated: true,
+  //     label: 'to the',
+  //     type: 'smoothstep',
+  //   },
 ];
 
 export function Flow() {
@@ -51,6 +53,11 @@ export function Flow() {
     [],
   );
 
+  const onConnect = useCallback(
+    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
+    [],
+  );
+
   return (
     <div className="w-full h-full">
       <ReactFlow
@@ -58,6 +65,7 @@ export function Flow() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
       >
         <Background />
         <Controls />
