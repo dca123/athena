@@ -14,6 +14,7 @@ import {
 } from 'reactflow';
 import { createStore, useStore } from 'zustand';
 import { PropsWithChildren, useRef, createContext, useContext } from 'react';
+import { handleAddDataProductToDataProduct } from './actions';
 
 interface DataProductsProps {
   nodes: Node[];
@@ -43,6 +44,7 @@ const createDataProductsStore = (initProps: DataProductsProps) => {
       });
     },
     onConnect: (connection: Connection) => {
+      handleAddDataProductToDataProduct(connection);
       set({
         edges: addEdge(connection, get().edges),
       });

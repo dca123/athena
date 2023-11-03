@@ -3,6 +3,10 @@ import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import { useDataProductsStore } from './store';
+import {
+  handleRemoveDataProductToDataProduct,
+  handleRemoveDataProducts,
+} from './actions';
 
 export function Flow() {
   const { edges, nodes, onConnect, onEdgesChange, onNodesChange } =
@@ -22,6 +26,10 @@ export function Flow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onEdgesDelete={(e) => handleRemoveDataProductToDataProduct(e)}
+        onNodesDelete={(nodes) =>
+          handleRemoveDataProducts(nodes.map((n) => ({ id: n.id })))
+        }
         defaultViewport={{
           x: 100,
           y: 100,

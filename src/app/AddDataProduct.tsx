@@ -46,17 +46,15 @@ export function AddDataProductButton() {
     },
   });
 
-  function handleSubmit(data: FormSchema) {
-    console.log(data);
-    const id = Math.random().toString(36).substring(2, 9);
+  async function handleSubmit(data: FormSchema) {
+    const id = await handleAddDataProduct(data);
     addNode({
-      id,
+      id: id.toString(),
       data: { label: `${data.name}` },
       position: { x: 500, y: Math.random() * 100 },
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
     });
-    handleAddDataProduct(data);
     setOpen(false);
     form.reset();
   }

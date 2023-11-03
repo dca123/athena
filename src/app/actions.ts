@@ -1,9 +1,49 @@
 'use server';
 
 import { db } from '@/lib/db';
-import { dataProducts } from '@/lib/schema';
+import { dataProducts, dataProductsToDataProducts } from '@/lib/schema';
 import { FormSchema } from './AddDataProduct';
+import type { Connection, Edge, Node } from 'reactflow';
+import { and, eq, or } from 'drizzle-orm';
 
 export async function handleAddDataProduct(data: FormSchema) {
-  await db.insert(dataProducts).values(data);
+  const dataProduct = await db
+    .insert(dataProducts)
+    .values(data)
+    .returning({ id: dataProducts.id });
+  return dataProduct[0].id;
+}
+
+export async function handleAddDataProductToDataProduct(data: Connection) {
+  if (data.source === null || data.target === null) {
+    console.error('Source or target is null');
+    return;
+  }
+  await db.insert(dataProductsToDataProducts).values({
+    sourceId: parseInt(data.source),
+    targetId: parseInt(data.target),
+  });
+}
+
+export async function handleRemoveDataProductToDataProduct(
+  edges: Pick<Edge, 'source' | 'target'>[],
+) {
+  await db
+    .delete(dataProductsToDataProducts)
+    .where(
+      or(
+        ...edges.map((e) =>
+          and(
+            eq(dataProductsToDataProducts.sourceId, parseInt(e.source)),
+            eq(dataProductsToDataProducts.targetId, parseInt(e.target)),
+          ),
+        ),
+      ),
+    );
+}
+
+export async function handleRemoveDataProducts(nodes: Pick<Node, 'id'>[]) {
+  await db
+    .delete(dataProducts)
+    .where(or(...nodes.map((n) => eq(dataProducts.id, parseInt(n.id)))));
 }
