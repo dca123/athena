@@ -12,6 +12,7 @@ export async function handleAddDataProduct(data: FormSchema) {
     .insert(dataProducts)
     .values(data)
     .returning({ id: dataProducts.id });
+  revalidatePath('/');
   return dataProduct[0].id;
 }
 
@@ -24,6 +25,7 @@ export async function handleAddDataProductToDataProduct(data: Connection) {
     sourceId: parseInt(data.source),
     targetId: parseInt(data.target),
   });
+  revalidatePath('/');
 }
 
 export async function handleRemoveDataProductToDataProduct(
@@ -41,6 +43,7 @@ export async function handleRemoveDataProductToDataProduct(
         ),
       ),
     );
+  revalidatePath('/');
 }
 
 export async function handleRemoveDataProducts(nodes: Pick<Node, 'id'>[]) {
