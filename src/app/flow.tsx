@@ -1,11 +1,18 @@
 'use client';
 import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
+
 import { useDataProductsStore } from './store';
 
 export function Flow() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
-    useDataProductsStore();
+  const { edges, nodes, onConnect, onEdgesChange, onNodesChange } =
+    useDataProductsStore((s) => ({
+      nodes: s.nodes,
+      edges: s.edges,
+      onNodesChange: s.onNodesChange,
+      onEdgesChange: s.onEdgesChange,
+      onConnect: s.onConnect,
+    }));
 
   return (
     <div className="w-full h-full">

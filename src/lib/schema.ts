@@ -6,6 +6,8 @@ export const dataProducts = pgTable('dataProducts', {
   name: text('name').notNull(),
   description: text('description').notNull(),
 });
+export type DataProduct = typeof dataProducts.$inferSelect;
+
 export const dataProductRelations = relations(dataProducts, ({ many }) => ({
   source: many(dataProducts),
   target: many(dataProducts),
@@ -21,6 +23,8 @@ export const dataProductsToDataProducts = pgTable(
     pk: primaryKey(t.sourceId, t.targetId),
   }),
 );
+export type DataProductsToDataProducts =
+  typeof dataProductsToDataProducts.$inferSelect;
 
 export const dataProductToDataProductRelations = relations(
   dataProductsToDataProducts,

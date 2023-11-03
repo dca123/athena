@@ -8,9 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
-  SheetClose,
 } from '@/components/ui/sheet';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -23,7 +21,7 @@ import {
 } from '@/components/ui/form';
 
 import * as z from 'zod';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Position } from 'reactflow';
 import { useDataProductsStore } from './store';
@@ -36,7 +34,7 @@ const FormSchema = z.object({
 type FormSchema = z.infer<typeof FormSchema>;
 
 export function AddDataProductButton() {
-  const { addNode } = useDataProductsStore();
+  const addNode = useDataProductsStore((s) => s.addNode);
   const [open, setOpen] = useState(false);
 
   const form = useForm<FormSchema>({
@@ -58,6 +56,7 @@ export function AddDataProductButton() {
       targetPosition: Position.Left,
     });
     setOpen(false);
+    form.reset();
   }
 
   return (
