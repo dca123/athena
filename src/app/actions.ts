@@ -5,6 +5,7 @@ import { dataProducts, dataProductsToDataProducts } from '@/lib/schema';
 import { FormSchema } from './AddDataProduct';
 import type { Connection, Edge, Node } from 'reactflow';
 import { and, eq, or } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 export async function handleAddDataProduct(data: FormSchema) {
   const dataProduct = await db
@@ -46,4 +47,5 @@ export async function handleRemoveDataProducts(nodes: Pick<Node, 'id'>[]) {
   await db
     .delete(dataProducts)
     .where(or(...nodes.map((n) => eq(dataProducts.id, parseInt(n.id)))));
+  revalidatePath('/');
 }
