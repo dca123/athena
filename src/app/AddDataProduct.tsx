@@ -26,12 +26,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Position } from 'reactflow';
 import { useDataProductsStore } from './store';
 import { useState } from 'react';
+import { handleAddDataProduct } from './actions';
 
 const FormSchema = z.object({
   name: z.string().min(3),
   description: z.string().min(5),
 });
-type FormSchema = z.infer<typeof FormSchema>;
+export type FormSchema = z.infer<typeof FormSchema>;
 
 export function AddDataProductButton() {
   const addNode = useDataProductsStore((s) => s.addNode);
@@ -55,6 +56,7 @@ export function AddDataProductButton() {
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
     });
+    handleAddDataProduct(data);
     setOpen(false);
     form.reset();
   }
