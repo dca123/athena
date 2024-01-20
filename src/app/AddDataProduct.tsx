@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form';
 
 import * as z from 'zod';
-import { useForm } from 'react-hook-form';
+import { useController, useForm, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Position } from 'reactflow';
 import { useDataProductsStore } from './store';
@@ -31,6 +31,7 @@ import { handleAddDataProduct } from './actions';
 const FormSchema = z.object({
   name: z.string().min(3),
   description: z.string().min(5),
+  owners: z.array(z.string()).min(1),
 });
 export type FormSchema = z.infer<typeof FormSchema>;
 
@@ -43,11 +44,12 @@ export function AddDataProductButton() {
     defaultValues: {
       name: '',
       description: '',
+      owners: [''],
     },
   });
 
   async function handleSubmit(data: FormSchema) {
-    const id = await handleAddDataProduct(data);
+    /* const id = await handleAddDataProduct(data);
     addNode({
       id: id.toString(),
       data: { label: `${data.name}` },
@@ -56,9 +58,10 @@ export function AddDataProductButton() {
       targetPosition: Position.Left,
     });
     setOpen(false);
-    form.reset();
+    form.reset(); */
+    console.log(data);
   }
-
+  console.log(form.getValues());
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -97,6 +100,20 @@ export function AddDataProductButton() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
+                    <FormDescription>
+                      Enter a description for your data product
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="owners"
+                render={({ field: { value, ...props } }) => (
+                  <FormItem>
+                    <FormLabel>Owners</FormLabel>
+                    <FormControl></FormControl>
                     <FormDescription>
                       Enter a description for your data product
                     </FormDescription>

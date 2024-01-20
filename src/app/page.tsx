@@ -26,7 +26,6 @@ const FlowDataWrapper = async (props: PropsWithChildren) => {
   const dataProducts = await db.query.dataProducts.findMany();
   const dataProductsToDataProducts =
     await db.query.dataProductsToDataProducts.findMany();
-
   const { nodes, edges } = getLayoutedElements(
     dataProducts.map(
       (dataProduct) =>
