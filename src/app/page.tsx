@@ -5,25 +5,34 @@ import { PropsWithChildren } from 'react';
 import { DataProductsStoreProvider } from './store';
 import type { Edge, Node, Position } from 'reactflow';
 import Dagre from '@dagrejs/dagre';
+import { auth } from '@clerk/nextjs';
+import { dataProducts } from '@/lib/schema';
+import { eq } from 'drizzle-orm';
+
+async function getDataProducts() {
+  const currentAuth = auth();
+  if (currentAuth.orgId === undefined || currentAuth.orgId === null) {
+    throw new Error('no orgId');
+  } else {
+    return await db.query.dataProducts.findMany({
+      where: eq(dataProducts.organizationId, currentAuth.orgId),
+    });
+  }
+}
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 space-y-4 h-screen">
-      <h1 className="text-lg self-start font-mono leading-4 tracking-wider">
-        Athena
-      </h1>
-      <FlowDataWrapper>
-        <AddDataProductButton />
-        <div className="w-[100%] h-[100%] border rounded">
-          <Flow />
-        </div>
-      </FlowDataWrapper>
-    </main>
+    <FlowDataWrapper>
+      <AddDataProductButton />
+      <div className="w-[100%] h-[100%] border rounded">
+        <Flow />
+      </div>
+    </FlowDataWrapper>
   );
 }
 
 const FlowDataWrapper = async (props: PropsWithChildren) => {
-  const dataProducts = await db.query.dataProducts.findMany();
+  const dataProducts = await getDataProducts();
   const dataProductsToDataProducts =
     await db.query.dataProductsToDataProducts.findMany();
   const { nodes, edges } = getLayoutedElements(
@@ -46,9 +55,17 @@ const FlowDataWrapper = async (props: PropsWithChildren) => {
         }) satisfies Edge,
     ),
   );
+  const { orgId } = auth();
+  if (orgId === undefined || orgId === null) {
+    throw new Error('No org Id');
+  }
 
   return (
-    <DataProductsStoreProvider nodes={nodes} edges={edges}>
+    <DataProductsStoreProvider
+      nodes={nodes}
+      edges={edges}
+      organizationId={orgId}
+    >
       {props.children}
     </DataProductsStoreProvider>
   );
@@ -56,6 +73,13 @@ const FlowDataWrapper = async (props: PropsWithChildren) => {
 
 const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
+  if (nodes.length === 0) {
+    console.warn('No nodes available');
+    return {
+      nodes: [],
+      edges: [],
+    };
+  }
   g.setGraph({ rankdir: 'LR', nodesep: 100, ranksep: 200 });
 
   edges.forEach((edge) => g.setEdge(edge.source, edge.target));

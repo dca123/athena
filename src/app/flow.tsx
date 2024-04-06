@@ -37,7 +37,6 @@ export function Flow() {
           handleRemoveDataProducts(nodes.map((n) => ({ id: n.id })))
         }
         onNodeClick={(e, n) => {
-          console.log(n);
           setDetailsSheetOpen(true);
           setSelectedDataProduct(n.id);
         }}

@@ -40,6 +40,7 @@ export const dataProducts = pgTable('dataProducts', {
   name: text('name').notNull(),
   description: text('description').notNull(),
   owners: text('owners').array().notNull(),
+  organizationId: text('organizationId').notNull(),
 });
 export type DataProduct = typeof dataProducts.$inferSelect;
 

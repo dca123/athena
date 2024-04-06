@@ -60,12 +60,18 @@ const createDataProductsStore = (initProps: DataProductsProps) => {
 const DataProductsStoreContext = createContext<DataProductsStore | null>(null);
 
 export function DataProductsStoreProvider(
-  props: PropsWithChildren<DataProductsProps>,
+  props: PropsWithChildren<DataProductsProps & { organizationId: string }>,
 ) {
-  const { children, ...initProps } = props;
+  const { children, organizationId, ...initProps } = props;
   const storeRef = useRef<DataProductsStore>();
-  if (storeRef.current === undefined) {
+  const organizationIdRef = useRef<string>();
+
+  if (
+    storeRef.current === undefined ||
+    organizationIdRef.current !== organizationId
+  ) {
     storeRef.current = createDataProductsStore(initProps);
+    organizationIdRef.current = organizationId;
   }
   return (
     <DataProductsStoreContext.Provider value={storeRef.current}>
