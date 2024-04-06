@@ -6,6 +6,7 @@ import { FormSchema } from './AddDataProduct';
 import type { Connection, Edge, Node } from 'reactflow';
 import { and, eq, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@clerk/nextjs';
 
 export async function getDataProduct(id: string) {
   const dataProduct = await db.query.dataProducts.findFirst({
@@ -48,9 +49,16 @@ export async function getDataProduct(id: string) {
 }
 
 export async function handleAddDataProduct(data: FormSchema) {
+  const { orgId } = auth();
+  if (orgId === undefined || orgId === null) {
+    throw new Error('orgid does not exist, is the user logged in ? ');
+  }
   const dataProduct = await db
     .insert(dataProducts)
-    .values(data)
+    .values({
+      ...data,
+      organizationId: orgId,
+    })
     .returning({ id: dataProducts.id });
   revalidatePath('/');
   return dataProduct[0].id;
